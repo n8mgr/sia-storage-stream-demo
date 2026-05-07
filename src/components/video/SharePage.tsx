@@ -113,21 +113,21 @@ export function SharePage() {
   }, [sdk, indexerUrl])
 
   return (
-    <div className="flex-1 p-6 space-y-4 max-w-5xl mx-auto w-full">
+    <div className="flex-1 p-4 space-y-3 max-w-7xl mx-auto w-full">
       <div className="flex items-center justify-between">
         <Link
           to="/"
-          className="text-xs text-neutral-500 hover:text-neutral-900 transition-colors"
+          className="text-xs text-neutral-500 hover:text-neutral-100 transition-colors"
         >
           ← Library
         </Link>
-        <span className="text-[11px] text-neutral-400 font-mono uppercase tracking-wider">
+        <span className="text-[11px] text-neutral-500 font-mono uppercase tracking-wider">
           shared
         </span>
       </div>
 
       {error ? (
-        <div className="px-4 py-2.5 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
+        <div className="px-4 py-2.5 bg-red-950/40 border border-red-900 rounded-lg text-red-300 text-sm">
           Failed to open share link: {error}
         </div>
       ) : !object ? (

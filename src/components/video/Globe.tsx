@@ -436,7 +436,7 @@ export function Globe({ object }: Props) {
       </div>
       <div className="flex items-center justify-center gap-3 text-[11px] text-neutral-500 font-mono">
         {error ? (
-          <span className="text-red-600">hosts unavailable: {error}</span>
+          <span className="text-red-400">hosts unavailable: {error}</span>
         ) : scopeCount === null ? (
           <span>loading hosts…</span>
         ) : (
@@ -446,7 +446,7 @@ export function Globe({ object }: Props) {
               <>
                 {' '}
                 <span
-                  className="text-amber-600"
+                  className="text-amber-400"
                   title="Hosts the indexer didn't return or with placeholder (0,0) coords"
                 >
                   ({scopeCount - plottedCount} unplottable)
@@ -454,14 +454,14 @@ export function Globe({ object }: Props) {
               </>
             )}{' '}
             &middot;{' '}
-            <span className="text-green-600">{activeHostCount} active</span>
+            <span className="text-green-400">{activeHostCount} active</span>
           </span>
         )}
         {manualControl && (
           <button
             type="button"
             onClick={() => recenterRef.current()}
-            className="text-neutral-500 hover:text-neutral-900 transition-colors"
+            className="text-neutral-500 hover:text-neutral-100 transition-colors"
             title="Recenter on your location"
           >
             ↺ recenter

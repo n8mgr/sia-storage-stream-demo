@@ -10,7 +10,7 @@ export function Toasts() {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className="animate-fade-in px-4 py-2 bg-white border border-neutral-200 rounded-lg text-sm text-neutral-700 shadow-lg"
+          className="animate-fade-in px-4 py-2 bg-neutral-900 border border-neutral-800 rounded-lg text-sm text-neutral-300 shadow-lg"
         >
           {toast.message}
         </div>

@@ -54,12 +54,12 @@ export function AuthFlow() {
   return (
     <div className="flex-1 flex flex-col">
       {error && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm max-w-md text-center shadow-sm">
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 bg-red-950/40 border border-red-900 rounded-lg text-red-300 text-sm max-w-md text-center shadow-sm">
           {error}
           <button
             type="button"
             onClick={() => setError(null)}
-            className="ml-2 text-red-600 hover:text-red-900"
+            className="ml-2 text-red-400 hover:text-red-200"
           >
             Dismiss
           </button>

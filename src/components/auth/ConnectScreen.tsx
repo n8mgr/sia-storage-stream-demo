@@ -45,10 +45,10 @@ export function ConnectScreen({
     <div className="flex flex-col items-center justify-center flex-1 px-4">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl font-semibold text-neutral-900">
+          <h1 className="text-2xl font-semibold text-neutral-100">
             Connect to Indexer
           </h1>
-          <p className="text-neutral-600 text-sm">
+          <p className="text-neutral-400 text-sm">
             Enter your Sia indexer URL to get started
           </p>
         </div>
@@ -56,9 +56,9 @@ export function ConnectScreen({
         <DevNote title="Indexer URL & App Key">
           <p>
             The indexer URL points to your Sia storage provider. The default is{' '}
-            <code className="text-amber-700">https://sia.storage</code>. Your
+            <code className="text-amber-300">https://sia.storage</code>. Your
             app key (set in{' '}
-            <code className="text-amber-700">src/lib/constants.ts</code>)
+            <code className="text-amber-300">src/lib/constants.ts</code>)
             uniquely identifies your app to the indexer.
           </p>
           <p className="mt-1">
@@ -73,14 +73,14 @@ export function ConnectScreen({
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="https://sia.storage"
-            className="w-full px-4 py-3 bg-white border border-neutral-300 rounded-lg text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-green-600"
+            className="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-green-600"
           />
 
           <button
             type="button"
             onClick={handleConnect}
             disabled={loading || !url}
-            className="w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-medium rounded-lg transition-colors"
+            className="w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-neutral-800 disabled:text-neutral-500 text-white font-medium rounded-lg transition-colors"
           >
             {loading ? 'Connecting...' : 'Connect'}
           </button>

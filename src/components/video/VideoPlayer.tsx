@@ -69,14 +69,14 @@ export function VideoPlayer({ object, contentType }: Props) {
 
   if (error) {
     return (
-      <div className="px-4 py-2.5 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
+      <div className="px-4 py-2.5 bg-red-950/40 border border-red-900 rounded-lg text-red-300 text-sm">
         {error}
       </div>
     )
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex flex-col lg:flex-row gap-4">
         <video
           ref={videoRef}
@@ -96,7 +96,7 @@ export function VideoPlayer({ object, contentType }: Props) {
         >
           <track kind="captions" />
         </video>
-        <div className="lg:w-80 lg:shrink-0">
+        <div className="lg:w-96 lg:shrink-0">
           <Globe object={object} />
         </div>
       </div>

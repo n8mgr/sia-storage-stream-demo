@@ -23,9 +23,9 @@ export function Navbar() {
   }
 
   return (
-    <header className="border-b border-neutral-200/80">
-      <div className="flex items-center justify-between px-6 py-3 max-w-5xl mx-auto">
-        <h1 className="text-sm font-semibold text-neutral-900 tracking-tight">
+    <header className="border-b border-neutral-800/80">
+      <div className="flex items-center justify-between px-6 py-3 max-w-7xl mx-auto">
+        <h1 className="text-sm font-semibold text-neutral-100 tracking-tight">
           {APP_NAME}
         </h1>
         {isConnected && publicKey && (
@@ -44,7 +44,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={handleSignOut}
-              className="text-xs text-neutral-500 hover:text-neutral-900 transition-colors ml-1"
+              className="text-xs text-neutral-500 hover:text-neutral-100 transition-colors ml-1"
             >
               Sign Out
             </button>

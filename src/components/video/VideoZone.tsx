@@ -220,26 +220,26 @@ export function VideoZone() {
     : 0
 
   return (
-    <div className="flex-1 p-6 space-y-5 max-w-5xl mx-auto w-full">
+    <div className="flex-1 p-4 space-y-4 max-w-7xl mx-auto w-full">
       {isPlaceholderKey && (
         <DevNote title="Replace Your App Key">
           <p>
             You&apos;re using the template placeholder. Set your own key in{' '}
-            <code className="text-amber-700">src/lib/constants.ts</code>.
+            <code className="text-amber-300">src/lib/constants.ts</code>.
           </p>
         </DevNote>
       )}
 
       <DevNote title="Streaming Video with Range Requests">
         <p>
-          The <code className="text-amber-700">VideoPlayer</code> sets a{' '}
-          <code className="text-amber-700">&lt;video&gt;</code> src to a virtual{' '}
-          <code className="text-amber-700">/__sia_stream__/&lt;id&gt;</code>{' '}
+          The <code className="text-amber-300">VideoPlayer</code> sets a{' '}
+          <code className="text-amber-300">&lt;video&gt;</code> src to a virtual{' '}
+          <code className="text-amber-300">/__sia_stream__/&lt;id&gt;</code>{' '}
           URL. A service worker (
-          <code className="text-amber-700">public/sia-stream-sw.js</code>)
+          <code className="text-amber-300">public/sia-stream-sw.js</code>)
           intercepts the browser&apos;s native byte-range requests and forwards
           them to the page over a <code>MessageChannel</code>; the page calls{' '}
-          <code className="text-amber-700">
+          <code className="text-amber-300">
             sdk.download(obj, {`{ offset, length }`})
           </code>{' '}
           and pipes the chunks back. Seeking the scrubber triggers a fresh
@@ -248,12 +248,12 @@ export function VideoZone() {
       </DevNote>
 
       {error && (
-        <div className="flex items-center justify-between px-4 py-2.5 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
+        <div className="flex items-center justify-between px-4 py-2.5 bg-red-950/40 border border-red-900 rounded-lg text-red-300 text-sm">
           <span>{error}</span>
           <button
             type="button"
             onClick={() => setError(null)}
-            className="text-red-600 hover:text-red-900 text-xs ml-4 shrink-0"
+            className="text-red-400 hover:text-red-200 text-xs ml-4 shrink-0"
           >
             Dismiss
           </button>
@@ -271,12 +271,12 @@ export function VideoZone() {
           e.preventDefault()
           setDragOver(false)
         }}
-        className={`relative block border-2 border-dashed rounded-xl p-12 text-center transition-all duration-150 ${
+        className={`relative block border-2 border-dashed rounded-xl p-8 text-center transition-all duration-150 ${
           uploading
-            ? 'border-neutral-300 cursor-default'
+            ? 'border-neutral-700 cursor-default'
             : dragOver
               ? 'border-green-600 bg-green-600/5 cursor-pointer'
-              : 'border-neutral-300 hover:border-neutral-400 cursor-pointer'
+              : 'border-neutral-700 hover:border-neutral-600 cursor-pointer'
         }`}
       >
         <input
@@ -294,14 +294,14 @@ export function VideoZone() {
 
         {activeUpload ? (
           <div className="space-y-4">
-            <p className="text-neutral-700 text-sm">
+            <p className="text-neutral-300 text-sm">
               Uploading{' '}
-              <span className="text-neutral-900">{activeUpload.fileName}</span>{' '}
+              <span className="text-neutral-100">{activeUpload.fileName}</span>{' '}
               <span className="text-neutral-500">
                 ({formatBytes(activeUpload.fileSize)})
               </span>
             </p>
-            <div className="w-full max-w-xs mx-auto bg-neutral-200 rounded-full h-1.5 overflow-hidden">
+            <div className="w-full max-w-xs mx-auto bg-neutral-800 rounded-full h-1.5 overflow-hidden">
               {activeUpload.shardsDone === 0 ? (
                 <div className="bg-green-600 h-full rounded-full w-1/4 animate-indeterminate" />
               ) : (
@@ -323,7 +323,7 @@ export function VideoZone() {
         ) : (
           <div className="space-y-2">
             <svg
-              className="w-8 h-8 mx-auto text-neutral-400"
+              className="w-8 h-8 mx-auto text-neutral-500"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
@@ -332,7 +332,7 @@ export function VideoZone() {
             >
               <path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14m-9-4h6a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4a2 2 0 012-2z" />
             </svg>
-            <p className="text-neutral-600 text-sm">
+            <p className="text-neutral-400 text-sm">
               Drop a video here or click to browse
             </p>
             <p className="text-neutral-500 text-xs">
@@ -348,14 +348,14 @@ export function VideoZone() {
           <h2 className="text-xs font-medium text-neutral-500 uppercase tracking-wider">
             {videos.length} video{videos.length !== 1 ? 's' : ''}
           </h2>
-          <div className="divide-y divide-neutral-200/80">
+          <div className="divide-y divide-neutral-800/80">
             {videos.map((file) => (
               <div
                 key={file.id}
-                className="flex items-center justify-between py-3 group"
+                className="flex items-center justify-between py-2 group"
               >
                 <div className="flex-1 min-w-0 mr-4">
-                  <p className="text-sm text-neutral-900 truncate">
+                  <p className="text-sm text-neutral-100 truncate">
                     {file.metadata.name}
                   </p>
                   <p className="text-xs text-neutral-500 mt-0.5">
@@ -369,7 +369,7 @@ export function VideoZone() {
                   <button
                     type="button"
                     onClick={() => setSharingFile(file)}
-                    className="text-xs px-2.5 py-1 rounded-md border border-neutral-300 text-neutral-700 hover:bg-neutral-100 transition-colors"
+                    className="text-xs px-2.5 py-1 rounded-md border border-neutral-700 text-neutral-300 hover:bg-neutral-800 transition-colors"
                     title="Copy a share link"
                   >
                     Share
@@ -377,12 +377,12 @@ export function VideoZone() {
                   <button
                     type="button"
                     onClick={() => navigate(`/watch/${file.id}`)}
-                    className="text-xs px-2.5 py-1 rounded-md border border-neutral-300 text-neutral-700 hover:bg-neutral-100 transition-colors"
+                    className="text-xs px-2.5 py-1 rounded-md border border-neutral-700 text-neutral-300 hover:bg-neutral-800 transition-colors"
                   >
                     Play
                   </button>
                   <span
-                    className="text-[11px] text-neutral-400 font-mono group-hover:text-neutral-700 transition-colors"
+                    className="text-[11px] text-neutral-500 font-mono group-hover:text-neutral-300 transition-colors"
                     title={file.id}
                   >
                     {file.id.slice(0, 8)}...

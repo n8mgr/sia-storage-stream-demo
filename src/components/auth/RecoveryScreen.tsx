@@ -71,10 +71,10 @@ export function RecoveryScreen({
       <div className="flex flex-col items-center justify-center flex-1 px-4">
         <div className="w-full max-w-md space-y-6">
           <div className="text-center space-y-2">
-            <h1 className="text-2xl font-semibold text-neutral-900">
+            <h1 className="text-2xl font-semibold text-neutral-100">
               Recovery Phrase
             </h1>
-            <p className="text-neutral-600 text-sm">
+            <p className="text-neutral-400 text-sm">
               Generate a new recovery phrase or enter an existing one.
             </p>
           </div>
@@ -100,7 +100,7 @@ export function RecoveryScreen({
             <button
               type="button"
               onClick={() => setMode('import')}
-              className="w-full py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-900 font-medium rounded-lg transition-colors"
+              className="w-full py-3 bg-neutral-800 hover:bg-neutral-800 text-neutral-100 font-medium rounded-lg transition-colors"
             >
               Enter Existing Phrase
             </button>
@@ -114,12 +114,12 @@ export function RecoveryScreen({
     <div className="flex flex-col items-center justify-center flex-1 px-4">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-2xl font-semibold text-neutral-900">
+          <h1 className="text-2xl font-semibold text-neutral-100">
             {mode === 'generate'
               ? 'Save Your Recovery Phrase'
               : 'Enter Recovery Phrase'}
           </h1>
-          <p className="text-neutral-600 text-sm">
+          <p className="text-neutral-400 text-sm">
             {mode === 'generate'
               ? 'Write down these 12 words in order. You will need them to recover your account.'
               : 'Enter your 12-word recovery phrase.'}
@@ -128,14 +128,14 @@ export function RecoveryScreen({
 
         {mode === 'generate' ? (
           <div className="space-y-2">
-            <div className="grid grid-cols-3 gap-2 p-4 bg-white rounded-lg border border-neutral-300">
+            <div className="grid grid-cols-3 gap-2 p-4 bg-neutral-900 rounded-lg border border-neutral-700">
               {generatedPhrase.split(' ').map((word, i) => (
                 <div
                   key={`${word}-${i}`}
-                  className="text-center py-2 bg-neutral-100 rounded text-sm"
+                  className="text-center py-2 bg-neutral-800 rounded text-sm"
                 >
-                  <span className="text-neutral-400 mr-1">{i + 1}.</span>
-                  <span className="text-neutral-900">{word}</span>
+                  <span className="text-neutral-500 mr-1">{i + 1}.</span>
+                  <span className="text-neutral-100">{word}</span>
                 </div>
               ))}
             </div>
@@ -153,10 +153,10 @@ export function RecoveryScreen({
               onChange={(e) => handleValidatePhrase(e.target.value)}
               placeholder="Enter your 12-word recovery phrase..."
               rows={3}
-              className="w-full px-4 py-3 bg-white border border-neutral-300 rounded-lg text-neutral-900 placeholder-neutral-400 focus:outline-none focus:border-green-600"
+              className="w-full px-4 py-3 bg-neutral-900 border border-neutral-700 rounded-lg text-neutral-100 placeholder-neutral-500 focus:outline-none focus:border-green-600"
             />
             {phraseError && (
-              <p className="text-red-600 text-sm">{phraseError}</p>
+              <p className="text-red-400 text-sm">{phraseError}</p>
             )}
           </div>
         )}
@@ -165,7 +165,7 @@ export function RecoveryScreen({
           type="button"
           onClick={handleRegister}
           disabled={loading || !phrase.trim()}
-          className="w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-neutral-200 disabled:text-neutral-400 text-white font-medium rounded-lg transition-colors"
+          className="w-full py-3 bg-green-600 hover:bg-green-700 disabled:bg-neutral-800 disabled:text-neutral-500 text-white font-medium rounded-lg transition-colors"
         >
           {loading ? 'Registering...' : 'Complete Setup'}
         </button>
@@ -178,7 +178,7 @@ export function RecoveryScreen({
             setGeneratedPhrase('')
             setPhraseError(null)
           }}
-          className="w-full py-2 text-neutral-500 hover:text-neutral-900 text-sm transition-colors"
+          className="w-full py-2 text-neutral-500 hover:text-neutral-100 text-sm transition-colors"
         >
           Back
         </button>

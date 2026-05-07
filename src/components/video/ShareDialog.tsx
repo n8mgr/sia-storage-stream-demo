@@ -50,7 +50,11 @@ export function ShareDialog({ open, fileName, onCancel, onConfirm }: Props) {
       ref={dialogRef}
       onClose={onCancel}
       onCancel={onCancel}
-      className="rounded-xl border border-neutral-200 backdrop:bg-black/40 backdrop:backdrop-blur-sm p-0 w-[min(92vw,28rem)]"
+      // Explicit centering: native <dialog>:modal usually centers via
+      // `inset:0; margin:auto`, but Tailwind preflight + auto-height
+      // dialogs don't always cooperate. fixed + 50%/translate is
+      // bulletproof.
+      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 m-0 rounded-xl border border-neutral-800 bg-neutral-900 text-neutral-200 backdrop:bg-black/60 backdrop:backdrop-blur-sm p-0 w-[min(92vw,28rem)]"
     >
       <form
         method="dialog"
@@ -64,7 +68,7 @@ export function ShareDialog({ open, fileName, onCancel, onConfirm }: Props) {
         className="p-5 space-y-4"
       >
         <div>
-          <h3 className="text-sm font-medium text-neutral-900">Share link</h3>
+          <h3 className="text-sm font-medium text-neutral-100">Share link</h3>
           <p
             className="text-xs text-neutral-500 mt-0.5 truncate"
             title={fileName}
@@ -87,8 +91,8 @@ export function ShareDialog({ open, fileName, onCancel, onConfirm }: Props) {
                   onClick={() => setDays(p.days)}
                   className={`text-xs px-2.5 py-1 rounded-md border transition-colors ${
                     selected
-                      ? 'border-neutral-900 bg-neutral-900 text-white'
-                      : 'border-neutral-300 text-neutral-700 hover:bg-neutral-100'
+                      ? 'border-neutral-100 bg-neutral-100 text-neutral-900'
+                      : 'border-neutral-700 text-neutral-300 hover:bg-neutral-800'
                   }`}
                 >
                   {p.label}
@@ -96,7 +100,7 @@ export function ShareDialog({ open, fileName, onCancel, onConfirm }: Props) {
               )
             })}
           </div>
-          <label className="flex items-center gap-2 text-xs text-neutral-600 mt-2">
+          <label className="flex items-center gap-2 text-xs text-neutral-400 mt-2">
             <span>or</span>
             <input
               type="number"
@@ -107,7 +111,7 @@ export function ShareDialog({ open, fileName, onCancel, onConfirm }: Props) {
                 const n = Number(e.target.value)
                 if (Number.isFinite(n)) setDays(n)
               }}
-              className="w-20 px-2 py-1 border border-neutral-300 rounded-md text-right tabular-nums"
+              className="w-20 px-2 py-1 border border-neutral-700 rounded-md text-right tabular-nums"
             />
             <span>days</span>
           </label>
@@ -115,7 +119,7 @@ export function ShareDialog({ open, fileName, onCancel, onConfirm }: Props) {
 
         <div className="text-xs text-neutral-500">
           Expires{' '}
-          <span className="text-neutral-800 tabular-nums">
+          <span className="text-neutral-200 tabular-nums">
             {expires.toLocaleString()}
           </span>
         </div>
@@ -124,14 +128,14 @@ export function ShareDialog({ open, fileName, onCancel, onConfirm }: Props) {
           <button
             type="button"
             onClick={onCancel}
-            className="text-xs px-3 py-1.5 rounded-md border border-neutral-300 text-neutral-700 hover:bg-neutral-100 transition-colors"
+            className="text-xs px-3 py-1.5 rounded-md border border-neutral-700 text-neutral-300 hover:bg-neutral-800 transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={!Number.isFinite(days) || days < MIN_DAYS}
-            className="text-xs px-3 py-1.5 rounded-md bg-neutral-900 text-white hover:bg-neutral-800 disabled:bg-neutral-300 disabled:cursor-default transition-colors"
+            className="text-xs px-3 py-1.5 rounded-md bg-neutral-100 text-neutral-900 hover:bg-neutral-200 disabled:bg-neutral-700 disabled:text-neutral-500 disabled:cursor-default transition-colors"
           >
             Copy link
           </button>

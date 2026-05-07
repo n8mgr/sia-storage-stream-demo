@@ -16,7 +16,7 @@ export function CopyButton({
         navigator.clipboard.writeText(value)
         addToast(label)
       }}
-      className="p-1 text-neutral-400 hover:text-neutral-700 transition-colors"
+      className="p-1 text-neutral-500 hover:text-neutral-300 transition-colors"
       title="Copy"
     >
       <svg

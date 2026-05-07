@@ -24,9 +24,9 @@ function formatBytes(bytes: number): string {
 
 function elapsedColor(ms: number): string {
   // Latency banding: green <300ms (great), amber <800ms (ok), red >=800ms.
-  if (ms < 300) return 'text-green-600'
-  if (ms < 800) return 'text-amber-600'
-  return 'text-red-600'
+  if (ms < 300) return 'text-green-400'
+  if (ms < 800) return 'text-amber-400'
+  return 'text-red-400'
 }
 
 let nextId = 1
@@ -62,13 +62,13 @@ export function ShardLog() {
       <div className="text-[11px] font-medium text-neutral-500 uppercase tracking-wider px-1">
         Recent shards
       </div>
-      <div className="rounded-lg border border-neutral-200 bg-neutral-50 overflow-hidden">
+      <div className="rounded-lg border border-neutral-800 bg-neutral-900 overflow-hidden">
         {entries.length === 0 ? (
-          <div className="px-3 py-2 text-xs text-neutral-400 font-mono">
+          <div className="px-3 py-2 text-xs text-neutral-500 font-mono">
             waiting for shard downloads…
           </div>
         ) : (
-          <div className="divide-y divide-neutral-200/70 font-mono text-xs">
+          <div className="divide-y divide-neutral-800/70 font-mono text-xs">
             {entries.map((e) => (
               <div
                 key={e.id}
@@ -77,16 +77,16 @@ export function ShardLog() {
                 <span className={`tabular-nums ${elapsedColor(e.elapsedMs)}`}>
                   {e.elapsedMs} ms
                 </span>
-                <span className="text-neutral-600 tabular-nums">
+                <span className="text-neutral-400 tabular-nums">
                   {formatBytes(e.shardSize)}
                 </span>
                 <span className="text-neutral-500 truncate" title={e.hostKey}>
                   slab {e.slabIndex} · shard {e.shardIndex} ·{' '}
-                  <span className="text-neutral-700">
+                  <span className="text-neutral-300">
                     {e.hostKey.slice(0, 16)}…
                   </span>
                 </span>
-                <span className="text-neutral-400 text-[10px] tabular-nums">
+                <span className="text-neutral-500 text-[10px] tabular-nums">
                   {new Date(e.receivedAt).toLocaleTimeString([], {
                     hour12: false,
                   })}
