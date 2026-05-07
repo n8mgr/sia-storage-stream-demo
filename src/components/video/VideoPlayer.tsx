@@ -49,14 +49,21 @@ export function VideoPlayer({ object, contentType }: Props) {
     }
   }, [object, contentType])
 
-  // The user clicked "Play" to mount this component, which is a user gesture
-  // that should authorize autoplay-with-sound. Browsers can still reject it
-  // (e.g. autoplay policy in the embedding context); swallow the rejection
-  // and let the user hit Play again on the controls.
+  // Autoplay strategy: try unmuted first (the user clicked "Play" to get
+  // here, which usually authorizes autoplay-with-sound). If the browser
+  // refuses — common after a route change + service-worker install on
+  // first visit, when the user-gesture activation has lapsed — fall back
+  // to muted autoplay, which every major browser allows unconditionally.
+  // The user can hit the unmute button on the native controls.
   useEffect(() => {
     if (!src || !videoRef.current) return
-    videoRef.current.play().catch(() => {
-      /* autoplay blocked — user can click play */
+    const v = videoRef.current
+    v.muted = false
+    v.play().catch(() => {
+      v.muted = true
+      v.play().catch(() => {
+        /* even muted autoplay blocked — user must click play */
+      })
     })
   }, [src])
 

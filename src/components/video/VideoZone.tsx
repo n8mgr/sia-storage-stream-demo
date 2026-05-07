@@ -8,7 +8,9 @@ import { useNavigate } from 'react-router-dom'
 import { APP_KEY, DATA_SHARDS, PARITY_SHARDS } from '../../lib/constants'
 import { setStreamSdk } from '../../lib/video-stream'
 import { useAuthStore } from '../../stores/auth'
+import { useToastStore } from '../../stores/toast'
 import { DevNote } from '../DevNote'
+import { ShareDialog } from './ShareDialog'
 
 type FileMetadata = {
   name: string
@@ -58,11 +60,13 @@ const isPlaceholderKey = APP_KEY.startsWith('{' + '{')
 export function VideoZone() {
   const sdk = useAuthStore((s) => s.sdk)
   const navigate = useNavigate()
+  const addToast = useToastStore((s) => s.addToast)
   const [videos, setVideos] = useState<VideoFile[]>([])
   const [uploading, setUploading] = useState(false)
   const [activeUpload, setActiveUpload] = useState<UploadProgress | null>(null)
   const [dragOver, setDragOver] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [sharingFile, setSharingFile] = useState<VideoFile | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Keep the streaming bridge wired to the live Sdk.
@@ -160,6 +164,41 @@ export function VideoZone() {
   async function handleFiles(fileList: FileList) {
     for (const file of Array.from(fileList)) {
       await uploadFile(file)
+    }
+  }
+
+  async function shareVideo(file: VideoFile, validDays: number) {
+    if (!sdk) return
+    try {
+      const validUntil = new Date(Date.now() + validDays * 24 * 60 * 60 * 1000)
+      const siaUrl = sdk.shareObject(file.object, validUntil)
+
+      // Drop the indexer host out of the sia:// URL. We assume the
+      // recipient's app uses the same indexer this user connected to
+      // (SharePage reconstructs `sia://<their-indexer-host>${compact}`).
+      // If parsing ever fails (URL grammar drift), fall back to embedding
+      // the full sia URL — slightly longer but always works.
+      let compact: string
+      try {
+        const parsed = new URL(siaUrl)
+        if (parsed.protocol !== 'sia:' || !parsed.hash) {
+          throw new Error('unexpected share URL shape')
+        }
+        compact = `${parsed.pathname}${parsed.search}${parsed.hash}`
+      } catch {
+        compact = siaUrl
+      }
+
+      // Privacy: the secret lives in our fragment, mirroring the sia://
+      // URL's own fragment. Browsers never send fragments to servers, and
+      // URL-encoding the inner `#` keeps the value round-tripping cleanly
+      // through clipboard / history APIs / proxies.
+      const shareUrl = `${window.location.origin}/share#${encodeURIComponent(compact)}`
+      await navigator.clipboard.writeText(shareUrl)
+      const dayLabel = validDays === 1 ? 'day' : 'days'
+      addToast(`Share link copied (valid ${validDays} ${dayLabel})`)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Share failed')
     }
   }
 
@@ -329,6 +368,14 @@ export function VideoZone() {
                 <div className="flex items-center gap-3 shrink-0">
                   <button
                     type="button"
+                    onClick={() => setSharingFile(file)}
+                    className="text-xs px-2.5 py-1 rounded-md border border-neutral-300 text-neutral-700 hover:bg-neutral-100 transition-colors"
+                    title="Copy a share link"
+                  >
+                    Share
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => navigate(`/watch/${file.id}`)}
                     className="text-xs px-2.5 py-1 rounded-md border border-neutral-300 text-neutral-700 hover:bg-neutral-100 transition-colors"
                   >
@@ -346,6 +393,19 @@ export function VideoZone() {
           </div>
         </div>
       )}
+
+      <ShareDialog
+        open={sharingFile !== null}
+        fileName={sharingFile?.metadata.name ?? ''}
+        onCancel={() => setSharingFile(null)}
+        onConfirm={(days) => {
+          const file = sharingFile
+          if (!file) return
+          setSharingFile(null)
+          // Fire-and-forget; shareVideo posts its own toast / error.
+          void shareVideo(file, days)
+        }}
+      />
     </div>
   )
 }

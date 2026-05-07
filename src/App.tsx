@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AuthFlow } from './components/auth/AuthFlow'
 import { Navbar } from './components/Navbar'
 import { Toasts } from './components/Toast'
+import { SharePage } from './components/video/SharePage'
 import { VideoZone } from './components/video/VideoZone'
 import { WatchPage } from './components/video/WatchPage'
 import { useAuthStore } from './stores/auth'
@@ -37,6 +38,14 @@ export default function App() {
               element={
                 <AuthGate>
                   <WatchPage />
+                </AuthGate>
+              }
+            />
+            <Route
+              path="/share"
+              element={
+                <AuthGate>
+                  <SharePage />
                 </AuthGate>
               }
             />
