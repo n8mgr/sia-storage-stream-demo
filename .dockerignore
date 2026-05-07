@@ -1,0 +1,31 @@
+# Keep the build context small and reproducible.
+
+# Build outputs / installed deps — regenerated inside the build stage.
+node_modules
+dist
+
+# Dev / VCS / OS noise.
+.git
+.gitignore
+.DS_Store
+.vscode
+.idea
+*.log
+
+# Test infra not needed for the production bundle.
+e2e
+playwright-report
+test-results
+
+# Local env / secrets, just in case.
+.env
+.env.*
+
+# Sibling ffmpeg utility — has its own Dockerfile under tools/transcode.
+tools
+
+# Editor / docs not needed for the runtime image.
+CLAUDE.md
+README.md
+
+# `docker/` itself stays — nginx.conf lives inside it.
