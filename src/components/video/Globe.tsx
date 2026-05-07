@@ -139,11 +139,17 @@ export function Globe({ object }: Props) {
       const cssWidth = canvas.clientWidth || 1
       const dx = e.clientX - dragStartX
       const dy = e.clientY - dragStartY
-      // Drag the full canvas width = π radians of rotation. Drag right
-      // -> phi decreases so the surface follows the finger.
-      phi = dragStartPhi - (dx / cssWidth) * Math.PI
-      // Drag down -> theta increases (tilts the south pole toward us).
-      // Clamp to ±π/2 so the globe doesn't flip past its poles.
+      // Trackball convention: the surface point you grabbed follows your
+      // finger. A full canvas-width drag = π radians.
+      //
+      // Drag right -> the grabbed point moves right -> what was to the
+      // west of center rotates into view -> focus lon decreases. With
+      // `phi = -π/2 - lon`, decreasing lon means INCREASING phi.
+      phi = dragStartPhi + (dx / cssWidth) * Math.PI
+      // Drag down -> top of globe tilts toward camera -> northern
+      // hemisphere comes into view -> focus lat increases. With
+      // `theta = lat`, that's increasing theta. Clamp to ±π/2 so the
+      // globe doesn't flip past its poles.
       theta = Math.max(
         -Math.PI / 2,
         Math.min(Math.PI / 2, dragStartTheta + (dy / cssWidth) * Math.PI),
