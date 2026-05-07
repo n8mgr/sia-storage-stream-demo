@@ -79,6 +79,14 @@ export function Globe({ object }: Props) {
   // User coords from IP geolocation. Held in a ref so updating it doesn't
   // tear down and rebuild the globe instance.
   const userLocationRef = useRef<[number, number] | null>(null)
+  // Once the user drags, the camera stays where they put it instead of
+  // fighting them back to the auto-focus. Tracked in both a ref (for the
+  // RAF loop) and state (so the recenter button can show/hide).
+  const manualControlRef = useRef(false)
+  const [manualControl, setManualControl] = useState(false)
+  // Imperatively reset from the recenter button. Defined outside the
+  // effect so the button has stable access to it.
+  const recenterRef = useRef<() => void>(() => {})
 
   // Fire and forget: try to learn where the user is. The result is cached
   // at module scope so subsequent mounts don't re-fetch.
@@ -103,6 +111,67 @@ export function Globe({ object }: Props) {
     const pulses: Pulse[] = []
     let phi = 0
     let theta = 0.25 // gentle northern tilt while we don't know where the user is
+
+    // ---- Pointer drag ----------------------------------------------------
+    // Cobe has no built-in drag handling; map pixel deltas to angular
+    // deltas and update phi/theta directly. Setting manualControl pauses
+    // the auto-focus lerp in the tick.
+    let dragging = false
+    let dragStartX = 0
+    let dragStartY = 0
+    let dragStartPhi = 0
+    let dragStartTheta = 0
+
+    function onPointerDown(e: PointerEvent) {
+      dragging = true
+      manualControlRef.current = true
+      setManualControl(true)
+      dragStartX = e.clientX
+      dragStartY = e.clientY
+      dragStartPhi = phi
+      dragStartTheta = theta
+      canvas.setPointerCapture(e.pointerId)
+      canvas.style.cursor = 'grabbing'
+    }
+
+    function onPointerMove(e: PointerEvent) {
+      if (!dragging) return
+      const cssWidth = canvas.clientWidth || 1
+      const dx = e.clientX - dragStartX
+      const dy = e.clientY - dragStartY
+      // Drag the full canvas width = π radians of rotation. Drag right
+      // -> phi decreases so the surface follows the finger.
+      phi = dragStartPhi - (dx / cssWidth) * Math.PI
+      // Drag down -> theta increases (tilts the south pole toward us).
+      // Clamp to ±π/2 so the globe doesn't flip past its poles.
+      theta = Math.max(
+        -Math.PI / 2,
+        Math.min(Math.PI / 2, dragStartTheta + (dy / cssWidth) * Math.PI),
+      )
+    }
+
+    function onPointerUp(e: PointerEvent) {
+      if (!dragging) return
+      dragging = false
+      try {
+        canvas.releasePointerCapture(e.pointerId)
+      } catch {}
+      canvas.style.cursor = 'grab'
+    }
+
+    canvas.style.cursor = 'grab'
+    canvas.style.touchAction = 'none' // prevent scroll-on-drag on touch
+    canvas.addEventListener('pointerdown', onPointerDown)
+    canvas.addEventListener('pointermove', onPointerMove)
+    canvas.addEventListener('pointerup', onPointerUp)
+    canvas.addEventListener('pointercancel', onPointerUp)
+
+    // The recenter button calls this. Resetting drops back into the
+    // focus-on-user lerp the next frame.
+    recenterRef.current = () => {
+      manualControlRef.current = false
+      setManualControl(false)
+    }
 
     /** Camera target that centers a [lat, lon] (in degrees) on the front. */
     function focusFor(loc: [number, number]): { phi: number; theta: number } {
@@ -292,21 +361,26 @@ export function Globe({ object }: Props) {
         if (cancelled) return
         const now = performance.now()
 
-        const me = userLocationRef.current
-        if (me) {
-          // Ease toward the user-centered focus. The lerp factor 0.06 is
-          // ~6% per frame, so the camera reaches its target in ~30 frames
-          // (half a second at 60fps) — visible but not jarring.
-          const target = focusFor(me)
-          phi = lerpAngle(phi, target.phi, 0.06)
-          theta = lerp(theta, target.theta, 0.06)
+        if (manualControlRef.current) {
+          // User is dragging (or has dragged) — phi/theta are already
+          // being mutated by the pointer handlers, just leave them alone.
         } else {
-          // No location yet — slow auto-rotate and tilt back to the default,
-          // pausing when many pulses are active so users can see the
-          // highlighted hosts without them sliding off.
-          const rotationSpeed = pulses.length > 0 ? 0.0006 : 0.002
-          phi += rotationSpeed
-          theta = lerp(theta, 0.25, 0.06)
+          const me = userLocationRef.current
+          if (me) {
+            // Ease toward the user-centered focus. The lerp factor 0.06 is
+            // ~6% per frame, so the camera reaches its target in ~30 frames
+            // (half a second at 60fps) — visible but not jarring.
+            const target = focusFor(me)
+            phi = lerpAngle(phi, target.phi, 0.06)
+            theta = lerp(theta, target.theta, 0.06)
+          } else {
+            // No location yet — slow auto-rotate and tilt back to the
+            // default, pausing when many pulses are active so users can
+            // see the highlighted hosts without them sliding off.
+            const rotationSpeed = pulses.length > 0 ? 0.0006 : 0.002
+            phi += rotationSpeed
+            theta = lerp(theta, 0.25, 0.06)
+          }
         }
 
         globe?.update({
@@ -337,6 +411,10 @@ export function Globe({ object }: Props) {
       cancelled = true
       cancelAnimationFrame(rafId)
       unsubscribe()
+      canvas.removeEventListener('pointerdown', onPointerDown)
+      canvas.removeEventListener('pointermove', onPointerMove)
+      canvas.removeEventListener('pointerup', onPointerUp)
+      canvas.removeEventListener('pointercancel', onPointerUp)
       globe?.destroy()
     }
   }, [sdk, object])
@@ -350,7 +428,7 @@ export function Globe({ object }: Props) {
           style={{ contain: 'layout paint size' }}
         />
       </div>
-      <div className="text-center text-[11px] text-neutral-500 font-mono">
+      <div className="flex items-center justify-center gap-3 text-[11px] text-neutral-500 font-mono">
         {error ? (
           <span className="text-red-600">hosts unavailable: {error}</span>
         ) : scopeCount === null ? (
@@ -372,6 +450,16 @@ export function Globe({ object }: Props) {
             &middot;{' '}
             <span className="text-green-600">{activeHostCount} active</span>
           </span>
+        )}
+        {manualControl && (
+          <button
+            type="button"
+            onClick={() => recenterRef.current()}
+            className="text-neutral-500 hover:text-neutral-900 transition-colors"
+            title="Recenter on your location"
+          >
+            ↺ recenter
+          </button>
         )}
       </div>
     </div>
